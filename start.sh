@@ -1,8 +1,7 @@
-#!/bin/sh
-cd build
-echo "Contents of build directory:"
-ls -la
-echo "Changing permissions for minion"
-chmod +x minion
-echo "Running minion"
+#!/bin/bash
+# Перемещаемся в директорию build
+cd /app/build
+# Убедимся, что исполняемый файл имеет права на выполнение
+chmod +x ./minion
+# Запускаем бот
 ./minion
