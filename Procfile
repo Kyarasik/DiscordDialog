@@ -1,1 +1,1 @@
-web: ./build/minion
+web: ./start.sh
