@@ -1,1 +1,1 @@
-worker: ./minion
+web: cd build && ./minion
