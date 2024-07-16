@@ -1,1 +1,1 @@
-web: cd build && ./minion
+web: ./build/minion
