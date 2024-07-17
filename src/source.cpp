@@ -252,7 +252,7 @@ private:
 };
 
 int main() {
-    std::string token = "MTExNzQ4MTU1ODQ5MjgzOTk4Nw.GLwhyW.mgrjQPk307nxb_q0QWV5bW-SF0mhY9xZZlDxw0";
+    std::string token = "YOUR_BOT_TOKEN";
     MyClientClass client(token, SleepyDiscord::USER_CONTROLED_THREADS);
     client.setIntents(SleepyDiscord::Intent::SERVER_MESSAGES | SleepyDiscord::Intent::DIRECT_MESSAGES);
     client.run();
