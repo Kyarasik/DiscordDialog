@@ -227,11 +227,13 @@ private:
         while (true) {
             auto now = std::time(nullptr);
             for (auto it = couples.begin(); it != couples.end();) {
-                if (std::difftime(now, std::get<2>(*it)) > 30) {
+                if (std::difftime(now, std::get<2>(*it)) > 3600) {
                     sendMessage(std::get<0>(*it), "Диалог завершён автоматически через один час. 💔");
                     sendMessage(std::get<1>(*it), "Диалог завершён автоматически через один час. 💔");
                     activeUsers.erase(getUserByChannelID(std::get<0>(*it)));
+                    active_request[getUserByChannelID(std::get<0>(*it))] = false;
                     activeUsers.erase(getUserByChannelID(std::get<1>(*it)));
+                    active_request[getUserByChannelID(std::get<0>(*it))] = false;
                     it = couples.erase(it);
                 } else {
                     ++it;
