@@ -1,2 +1,1 @@
-worker: ./start.sh
-
+worker: ./commit.sh
