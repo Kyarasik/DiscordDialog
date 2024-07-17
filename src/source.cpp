@@ -18,8 +18,8 @@ struct adj {
 };
 
 int count_value = 0;
-std::string bot_id = "1117481558492839987";
-std::string bot_channel = "1117854607712981013";
+std::string bot_id = "YOUR_BOT_ID";
+std::string bot_channel = "YOUR_BOT_CHANNEL_ID";
 std::unordered_map<SleepyDiscord::Snowflake<SleepyDiscord::User>, bool> active_request;
 std::unordered_map<SleepyDiscord::Snowflake<SleepyDiscord::User>, bool> active_dialog;
 std::unordered_map<SleepyDiscord::Snowflake<SleepyDiscord::Channel>, SleepyDiscord::Snowflake<SleepyDiscord::User>> reference;
@@ -252,8 +252,7 @@ private:
 };
 
 int main() {
-    std::string token = "YOUR_BOT_TOKEN";
-    MyClientClass client(token, SleepyDiscord::USER_CONTROLED_THREADS);
+    MyClientClass client("YOUR_BOT_TOKEN", SleepyDiscord::USER_CONTROLED_THREADS);
     client.setIntents(SleepyDiscord::Intent::SERVER_MESSAGES | SleepyDiscord::Intent::DIRECT_MESSAGES);
     client.run();
 }
