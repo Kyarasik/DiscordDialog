@@ -16,7 +16,6 @@ struct adj {
     SleepyDiscord::Snowflake<SleepyDiscord::Server> v2;
     SleepyDiscord::Snowflake<SleepyDiscord::User> v3;
 };
-
 int count_value = 0;
 std::string bot_id = "YOUR_BOT_ID";
 std::string bot_channel = "YOUR_BOT_CHANNEL_ID";
@@ -52,7 +51,7 @@ public:
     void onMessage(SleepyDiscord::Message message) override {
         std::cout << "Message received: " << message.content << std::endl;
         
-        if (message.content.empty()) {
+        if (message.content.empty() && (message.serverID.empty())) {
             sendMessage(message.channelID, "Пользователь отправил недопустимое сообщение! 🛑");
             return;
         }
@@ -227,13 +226,15 @@ private:
         while (true) {
             auto now = std::time(nullptr);
             for (auto it = couples.begin(); it != couples.end();) {
-                if (std::difftime(now, std::get<2>(*it)) > 3600) {
-                    sendMessage(std::get<0>(*it), "Диалог завершён автоматически через один час. 💔");
-                    sendMessage(std::get<1>(*it), "Диалог завершён автоматически через один час. 💔");
+                if (std::difftime(now, std::get<2>(*it)) > 1000) {
+                    sendMessage(std::get<0>(*it), "Диалог завершён автоматически. 💔");
+                    sendMessage(std::get<1>(*it), "Диалог завершён автоматически. 💔");
                     activeUsers.erase(getUserByChannelID(std::get<0>(*it)));
-                    active_request[getUserByChannelID(std::get<0>(*it))] = false;
+                    active_request[reference[std::get<0>(*it)]] = false;
+                    active_dialog[reference[std::get<0>(*it)]] = false;
                     activeUsers.erase(getUserByChannelID(std::get<1>(*it)));
-                    active_request[getUserByChannelID(std::get<0>(*it))] = false;
+                    active_request[reference[std::get<1>(*it)]] = false;
+                    active_dialog[reference[std::get<1>(*it)]] = false;
                     it = couples.erase(it);
                 } else {
                     ++it;
