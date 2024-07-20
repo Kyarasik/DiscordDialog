@@ -1,32 +1,32 @@
 # README
 
-HTTP-запросы с Discord обрабатываются библиотекой Sleepy-discord (```https://github.com/yourWaifu/sleepy-discord```) и переводятся в свой уникальный синтаксис на C++. Руководство по установке всех необходимых зависимостей библиотеки: ```https://github.com/yourWaifu/sleepy-discord/tree/master?tab=readme-ov-file#requirements```. Руководство по установке Git: ```https://github.com/git-guides/install-git```. Так же на официальной странице библиотеки вы можете найти синтаксис для своих проектов. Руководство расчитанно на macOS устройства.
+HTTP requests from Discord are processed by the Sleepy-discord library (```https://github.com/yourWaifu/sleepy-discord```) and translated into its unique syntax in C++. Installation guide for all necessary library dependencies: ```https://github.com/yourWaifu/sleepy-discord/tree/master?tab=readme-ov-file#requirements```. Git installation guide: ```https://github.com/git-guides/install-git```. You can also find syntax for your projects on the official library page. The guide is designed for macOS devices.
 
-## КАК СОБРАТЬ ПРОЕКТ:
-Убедитесь, что все нужные зависимости для Sleepy Discord и Git у вас установлены.
+## HOW TO BUILD THE PROJECT:
+Make sure all necessary dependencies for Sleepy Discord and Git are installed.
 
-1. В терминале вашего компьютера (или компилятора) выберите папку, где хотите, чтобы находился ваш исходный проект, после чего введите: ```git clone https://github.com/Kyarasik/DiscordDialog```.
+1. In your computer's terminal (or compiler), select the folder where you want your source project to be located, then enter: ```git clone https://github.com/Kyarasik/DiscordDialog```.
 
-2. Зайдите в ваш проект в любом текстовом редакторе кода, после чего в терминале вашего компьютера (или компилятора) перейдите в директорию проекта, на macOS это можно сделать командой ```cd путь_до_проекта```.
+2. Open your project in any code text editor, then in your computer's terminal (or compiler), navigate to the project directory. On macOS, this can be done with the command ```cd path_to_project```.
 
-3. Перейдите в файл source.cpp, замените строки ```YOUR_BOT_TOKEN```, ```YOUR_BOT_ID```, ```YOUR_BOT_CHANNEL_ID```.
+3. Go to the source.cpp file, and replace the lines ```YOUR_BOT_TOKEN```, ```YOUR_BOT_ID```.
 
-4. В корневой папке проекта создайте папку ```deps```. В терминале вашего компьютера (или компилятора) перейдите в папку deps, на macOS это можно сделать командой ```cd путь_до_папки```.
+4. In the root folder of the project, create a folder called ```deps```. In your computer's terminal (or compiler), navigate to the deps folder. On macOS, this can be done with the command ```cd path_to_folder```.
 
-5. Введите команду ```git clone https://github.com/yourWaifu/sleepy-discord```.
+5. Enter the command ```git clone https://github.com/yourWaifu/sleepy-discord```.
 
-6. Вернитесь в папку проекта командой ```cd ..``` (если у вас macOS).
+6. Return to the project folder with the command ```cd ..``` (if you are on macOS).
 
-7. В терминале вашего компьютера (или компилятора) перейдите в папку build, на macOS это можно сделать командой ```cd путь_до_папки```.
+7. In your computer's terminal (or compiler), navigate to the build folder. On macOS, this can be done with the command ```cd path_to_folder```.
 
-8. Введите команду ```cmake путь_до_вашего_проекта```, должен начаться длительный процесс установки сборки.
+8. Enter the command ```cmake path_to_your_project```, a long build process should begin.
 
-9. Обновите исполняемый файл до последней версии командой ```make``` (на других платформах команда может отличаться).
+9. Update the executable file to the latest version with the command ```make``` (the command may differ on other platforms).
 
-10. После чего введите в консоль ```./DiscordDialog```, после чего в терминале будет сообщение о успешном подключении. После этого ваш бот будет работать согласно данному коду.
+10. After that, enter the command ```./DiscordDialog``` in the console, and a message about a successful connection will appear in the terminal. After this, your bot will work according to the given code.
 
-## КАК ПОЛУЧИТЬ БЕЙДЖ АКТИВНОГО РАЗРАБОТЧИКА DISCORD:
-Если вы используете любую команду бота, то в течение следующих 24 часов вы сможете получить бейдж активного разработчика в Discord на портале разработчиков Discord ```https://discord.com/developers/active-developer```.
+## HOW TO GET THE DISCORD ACTIVE DEVELOPER BADGE:
+If you use any bot command, then within the next 24 hours you will be able to get the active developer badge on the Discord developer portal ```https://discord.com/developers/active-developer```.
 
-## СОТРУДНИЧЕСТВО:
-Если у вас остались какие-либо вопросы или вы хотите со мной связаться, предоставляю вам мой Discord аккаунт: ```k.y.a.r.a.s.i.k```.
+## COLLABORATION:
+If you have any questions or want to contact me, I provide my Discord account: ```k.y.a.r.a.s.i.k```.

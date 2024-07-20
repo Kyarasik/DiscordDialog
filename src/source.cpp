@@ -17,8 +17,6 @@ struct adj {
     SleepyDiscord::Snowflake<SleepyDiscord::User> v3;
 };
 int count_value = 0;
-std::string bot_id = "YOUR_BOT_ID";
-std::string bot_channel = "YOUR_BOT_CHANNEL_ID";
 std::unordered_map<SleepyDiscord::Snowflake<SleepyDiscord::User>, bool> active_request;
 std::unordered_map<SleepyDiscord::Snowflake<SleepyDiscord::User>, bool> active_dialog;
 std::unordered_map<SleepyDiscord::Snowflake<SleepyDiscord::Channel>, SleepyDiscord::Snowflake<SleepyDiscord::User>> reference;
@@ -26,6 +24,9 @@ std::queue<std::pair<SleepyDiscord::Snowflake<SleepyDiscord::Channel>, std::stri
 std::vector<std::pair<int, SleepyDiscord::Snowflake<SleepyDiscord::User>>> q;
 std::vector<std::tuple<SleepyDiscord::Snowflake<SleepyDiscord::Channel>, SleepyDiscord::Snowflake<SleepyDiscord::Channel>, std::time_t>> couples;
 std::unordered_map<SleepyDiscord::Snowflake<SleepyDiscord::User>, SleepyDiscord::Snowflake<SleepyDiscord::Channel>> activeUsers;
+
+std::string bot_ID = "YOUR_BOT_ID";
+
 bool containsEmoji(const std::string& s) {
     try {
         std::string test = s;
@@ -41,42 +42,44 @@ public:
 
     void onReady(SleepyDiscord::Ready readyData) override {
         std::cout << "Bot is ready!" << std::endl;
-        createGlobalAppCommand(getID(), "dialog", "Начать диалог с загадочным незнакомцем");
-        createGlobalAppCommand(getID(), "stop", "Завершить активный диалог/запрос");
-        createGlobalAppCommand(getID(), "help", "Как начать пользоваться приложением?");
+        createGlobalAppCommand(getID(), "dialog", "Start a dialog with a mysterious stranger");
+        createGlobalAppCommand(getID(), "stop", "End the active dialog/request");
+        createGlobalAppCommand(getID(), "help", "How to start using the app?");
         std::thread(&MyClientClass::processMessageQueue, this).detach();
         std::thread(&MyClientClass::checkDialogTimeouts, this).detach();
     }
 
     void onMessage(SleepyDiscord::Message message) override {
-        std::cout << "Message received: " << message.content << std::endl;
-        
-        if (message.content.empty() && (message.serverID.empty())) {
-            sendMessage(message.channelID, "Пользователь отправил недопустимое сообщение! 🛑");
-            return;
-        }
+    std::cout << "Message received: " << message.content << std::endl;
+    if(message.author.ID == bot_ID) return;
 
-        auto it = std::find_if(couples.begin(), couples.end(), [&](const auto& p) {
-            return (std::get<0>(p) == message.channelID && message.author.ID != bot_id) ||
-                   (std::get<1>(p) == message.channelID && message.author.ID != bot_id);
-        });
+    if (message.content.empty() && message.serverID.empty()) {
+        sendMessage(message.channelID, "User sent an invalid message! 🛑");
+        return;
+    }
 
-        if (it != couples.end()) {
-            if (std::get<0>(*it) == message.channelID && activeUsers[message.author.ID] != message.channelID) {
-                if (!message.attachments.empty()) {
-                    MessageQueue.push({std::get<1>(*it), "Пользователь отправил недопустимый файл! 🛑"});
-                } else {
-                    MessageQueue.push({std::get<1>(*it), message.content});
-                }
-            } else if (std::get<1>(*it) == message.channelID && activeUsers[message.author.ID] != message.channelID) {
-                if (!message.attachments.empty()) {
-                    MessageQueue.push({std::get<0>(*it), "Пользователь отправил недопустимый файл! 🛑"});
-                } else {
-                    MessageQueue.push({std::get<0>(*it), message.content});
+    auto it = std::find_if(couples.begin(), couples.end(), [&](const auto& p) {
+        return (std::get<0>(p) == message.channelID) || (std::get<1>(p) == message.channelID);
+    });
+
+    
+    if (it != couples.end()) {
+        if (std::get<0>(*it) == message.channelID && activeUsers[message.author.ID] != message.channelID) {
+            if (!message.attachments.empty()) {
+                MessageQueue.push({std::get<1>(*it), "User sent an invalid file! 🛑"});
+            } else {
+                MessageQueue.push({std::get<1>(*it), message.content});
+            }
+        } else if (std::get<1>(*it) == message.channelID && activeUsers[message.author.ID] != message.channelID) {
+            if (!message.attachments.empty()) {
+                MessageQueue.push({std::get<0>(*it), "User sent an invalid file! 🛑"});
+            } else {
+                MessageQueue.push({std::get<0>(*it), message.content});
                 }
             }
         }
     }
+    
 
     void onInteraction(SleepyDiscord::Interaction interaction) override {
         std::cout << "Interaction received: " << interaction.data.name << std::endl;
@@ -89,7 +92,7 @@ public:
             if (active_dialog[User_ID]) {
                 SleepyDiscord::Interaction::Response<> res;
                 res.type = SleepyDiscord::InteractionCallbackType::ChannelMessageWithSource;
-                res.data.content = "Извините, у вас уже есть активный собеседник. 🧐";
+                res.data.content = "Sorry, you already have an active partner. 🧐";
                 res.data.flags = SleepyDiscord::InteractionCallback::Message::Flags::Ephemeral;
                 createInteractionResponse(interaction.ID, interaction.token, res);
                 return;
@@ -101,7 +104,7 @@ public:
             if (hasActivePartner) {
                 SleepyDiscord::Interaction::Response<> res;
                 res.type = SleepyDiscord::InteractionCallbackType::ChannelMessageWithSource;
-                res.data.content = "Извините, у вас уже есть активный запрос. Вы всегда можете его отменить, используя команду /stop. 🛑";
+                res.data.content = "Sorry, you already have an active request. You can always cancel it using the **/stop** command. 🛑";
                 res.data.flags = SleepyDiscord::InteractionCallback::Message::Flags::Ephemeral;
                 createInteractionResponse(interaction.ID, interaction.token, res);
                 return;
@@ -112,7 +115,7 @@ public:
 
             SleepyDiscord::Interaction::Response<> response;
             response.type = SleepyDiscord::InteractionCallbackType::ChannelMessageWithSource;
-            response.data.content = "Поиск собеседника начат! Вы можете отменить его в любой момент, воспользовавшись командой /stop 🤝";
+            response.data.content = "Search for a partner has begun! You can cancel it at any time using the **/stop** command. 🤝";
             response.data.flags = SleepyDiscord::InteractionCallback::Message::Flags::Ephemeral;
             createInteractionResponse(interaction.ID, interaction.token, response);
             q.push_back({count_value, User_ID});
@@ -130,8 +133,8 @@ public:
                         reference[directMessageChannel1.ID] = q[i].second;
                         reference[directMessageChannel2.ID] = q[j].second;
                         couples.push_back({directMessageChannel1.ID, directMessageChannel2.ID, std::time(nullptr)});
-                        sendMessage(directMessageChannel1.ID, "Собеседник найден 👋! Вы можете прекратить общение в любой момент, используя команду /stop. Беседа автоматически закроется через час после начала. 💖");
-                        sendMessage(directMessageChannel2.ID, "Собеседник найден 👋! Вы можете прекратить общение в любой момент, используя команду /stop. Беседа автоматически закроется через час после начала. 💖");
+                        sendMessage(directMessageChannel1.ID, "Partner found 👋! You can end the conversation at any time using the **/stop** command. The chat will automatically close an hour after it starts. 💖");
+                        sendMessage(directMessageChannel2.ID, "Partner found 👋! You can end the conversation at any time using the **/stop** command. The chat will automatically close an hour after it starts. 💖");
 
                         q.erase(q.begin() + j);
                         q.erase(q.begin() + i);
@@ -162,9 +165,9 @@ public:
                     SleepyDiscord::Interaction::Response<> response;
                     response.type = SleepyDiscord::InteractionCallbackType::ChannelMessageWithSource;
                     response.data.flags = SleepyDiscord::InteractionCallback::Message::Flags::Ephemeral;
-                    response.data.content = "Диалог успешно завершён. Чтобы начать новый разговор, используйте команду /dialog. 😶‍🌫️";
+                    response.data.content = "The dialog was successfully completed. To start a new conversation, use the **/dialog** command. 😶‍🌫️";
 
-                    sendMessage(std::get<0>(*it) == interaction.channelID ? std::get<1>(*it) : std::get<0>(*it), "Ваш собеседник завершил разговор! 💔");
+                    sendMessage(std::get<0>(*it) == interaction.channelID ? std::get<1>(*it) : std::get<0>(*it), "Your partner ended the conversation! 💔");
                     createInteractionResponse(interaction.ID, interaction.token, response);
 
                     couples.erase(it);
@@ -184,7 +187,7 @@ public:
 
                 SleepyDiscord::Interaction::Response<> res;
                 res.type = SleepyDiscord::InteractionCallbackType::ChannelMessageWithSource;
-                res.data.content = "Поиск диалога успешно отменён, чтобы повторно начать новый диалог, используйте команду /dialog. 😶‍🌫️";
+                res.data.content = "Search for a dialog successfully canceled. To start a new dialog, use the **/dialog** command. 😶‍🌫️";
                 res.data.flags = SleepyDiscord::InteractionCallback::Message::Flags::Ephemeral;
                 createInteractionResponse(interaction.ID, interaction.token, res);
 
@@ -194,7 +197,7 @@ public:
             if (!found) {
                 SleepyDiscord::Interaction::Response<> response;
                 response.type = SleepyDiscord::InteractionCallbackType::ChannelMessageWithSource;
-                response.data.content = "Извините, у вас нету активного запроса, чтобы начать новый диалог, используйте команду /dialog. 🛑";
+                response.data.content = "Sorry, you don't have an active request. To start a new dialog, use the **/dialog** command. 🛑";
                 response.data.flags = SleepyDiscord::InteractionCallback::Message::Flags::Ephemeral;
                 createInteractionResponse(interaction.ID, interaction.token, response);
             }
@@ -202,7 +205,7 @@ public:
         } else if(interaction.data.name == "help"){
             SleepyDiscord::Interaction::Response<> response;
             response.type = SleepyDiscord::InteractionCallbackType::ChannelMessageWithSource;
-            response.data.content = "Спасибо Вам что используете наше приложение! 💖\nДля того чтоб начать пользоваться нашим приложением зайдите в любой для Вас удобный текстовый канал до которого бот имеет доступ, либо зайдите к нему в Личные Сообщения. После чего напишите команду /dialog и следуйте указаниям! 🔥";
+            response.data.content = "Thank you for using our application! 💖\nTo start using our application, go to any text channel that the bot has access to, or send it a direct message. Then use the **/dialog** command and follow the instructions! 🔥";
             response.data.flags = SleepyDiscord::InteractionCallback::Message::Flags::Ephemeral;
             createInteractionResponse(interaction.ID, interaction.token, response);
         }
@@ -227,8 +230,8 @@ private:
             auto now = std::time(nullptr);
             for (auto it = couples.begin(); it != couples.end();) {
                 if (std::difftime(now, std::get<2>(*it)) > 1000) {
-                    sendMessage(std::get<0>(*it), "Диалог завершён автоматически. 💔");
-                    sendMessage(std::get<1>(*it), "Диалог завершён автоматически. 💔");
+                    sendMessage(std::get<0>(*it), "Dialog ended automatically. 💔");
+                    sendMessage(std::get<1>(*it), "Dialog ended automatically. 💔");
                     activeUsers.erase(getUserByChannelID(std::get<0>(*it)));
                     active_request[reference[std::get<0>(*it)]] = false;
                     active_dialog[reference[std::get<0>(*it)]] = false;
